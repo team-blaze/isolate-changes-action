@@ -1,25 +1,22 @@
-#!/bin/bash
+#!/bin/sh
 # Assuming you have a folder called <folder>
 # this script will check if you have changes in the migration folder
 # and any other folder.
-#!/bin/sh
-set -e
+# fetch everything.
+git fetch -q
 
 isolate_folder=$1
-from_sha=$2
-to_sha=$3
-
+from_ref=$2
 
 echo "Isolate Folder: $isolate_folder";
-echo "From: $from_sha";
-echo "To: $to_sha";
+echo "From: $from_ref";
 
 # grep will exit with a 1 if no matches are found.
-git show --name-only --ancestry-path $from_sha^..$to_sha | grep -s -q ^$isolate_folder*
+git diff --name-only origin/$from_ref^.. | grep -s -q "^${isolate_folder}*"
 has_isolated_folder_changes=$?
 
 # grep -v inverts the search.
-git show --name-only --ancestry-path $from_sha^..$to_sha | grep -s -v -q ^$isolate_folder*
+git diff --name-only origin/$from_ref^.. | grep -s -v -q ^$isolate_folder*
 has_other_changes=$?
 
 # add exit codes - should only be zero if matches were
