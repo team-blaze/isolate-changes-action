@@ -1,0 +1,15 @@
+# action.yaml
+name: "Isolated changes"
+description: "This action allows you to isolate changes for a PR to a specific folder. Useful if you want migrations to be merged and deployed in isolation from other changes."
+inputs:
+  isolate_folder:
+    description: "The folder you would like to isolate"
+    required: true
+    default: "migrations"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.isolate_folder }}
+    - ${{ github.event.pull_request.base.sha }}
+    - ${{ github.event.pull_request.head.sha }}
